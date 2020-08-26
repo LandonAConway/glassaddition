@@ -1,0 +1,7 @@
+-------------------------------------
+------------Configuration------------
+-------------------------------------
+
+--Sets the amount of variations (shades) for each color. (not for white, grey, and black)
+--Can only be 9, 16, 25, 64, 256, or 289
+glassaddition.color_variations = 64
