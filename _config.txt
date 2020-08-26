@@ -3,5 +3,15 @@
 -------------------------------------
 
 --Sets the amount of variations (shades) for each color. (not for white, grey, and black)
---Can only be 9, 16, 25, 64, 256, or 289
+
+
+
+--Can only be set to 9, 16, 25, 64, 81, 144, 256, or 289. Will be automatically set to '64' if set to the wrong number.
+--Remember more variations takes much longer to load.
 glassaddition.color_variations = 64
+
+--If set to true, adds detail to the glass.
+glassaddition.enable_detail = true
+
+--If set to true, glass will not be semi-transparent.
+glassaddition.opaque = false

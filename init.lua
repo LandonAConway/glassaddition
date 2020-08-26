@@ -8,6 +8,7 @@ if variations ~= 9 and
   variations ~= 25 and
   variations ~= 64 and
   variations ~= 81 and
+  variations ~= 144 and
   variations ~= 264 and
   variations ~= 289 then
     variations = 64
@@ -51,23 +52,23 @@ glassaddition.grayscale = {
 }
 
 glassaddition.variations = {
-  { 5, groups = {_289=1, _256=1, _64=1, _81=1} },
-  { 12, groups = {_289=1, _256=1, _16=1, _25=1} },
-  { 17, groups = {_289=1,_256=1, _64=1, _81=1, _9=1} },
+  { 5, groups = {_289=1, _256=1, _144=1, _64=1, _81=1} },
+  { 12, groups = {_289=1, _256=1, _144=1, _16=1, _25=1} },
+  { 17, groups = {_289=1,_256=1, _144=1, _64=1, _81=1, _9=1} },
   { 24, groups = {_289=1, _256=1} },
-  { 29, groups = {_289=1, _256=1, _64=1, _81=1, _25=1} },
+  { 29, groups = {_289=1, _256=1, _144=1, _64=1, _81=1, _25=1} },
   { 35, groups = {_289=1, _256=1, _16=1} },
-  { 41, groups = {_289=1, _256=1, _64=1, _81=1} },
-  { 47, groups = {_289=1, _256=1} },
+  { 41, groups = {_289=1, _256=1, _144=1, _64=1, _81=1} },
+  { 47, groups = {_289=1, _256=1, _144=1} },
   { 50, groups = {_289=1, _81=1, _25=1, _9=1} },
-  { 53, groups = {_289=1, _256=1, _64=1} },
-  { 59, groups = {_289=1, _256=1, _16=1, _81=1} },
+  { 53, groups = {_289=1, _256=1, _144=1, _64=1} },
+  { 59, groups = {_289=1, _256=1, _144=1, _16=1, _81=1} },
   { 65, groups = {_289=1, _256=1, _64=1} },
-  { 71, groups = {_289=1, _256=1, _81=1, _25=1} },
+  { 71, groups = {_289=1, _256=1, _144=1, _81=1, _25=1} },
   { 76, groups = {_289=1, _256=1, _64=1} },
-  { 82, groups = {_289=1, _256=1, _16=1, _81=1, _9=1} },
-  { 88, groups = {_289=1, _256=1, _64=1, _25=1} },
-  { 94, groups = {_289=1, _256=1, _81=1} }
+  { 82, groups = {_289=1, _256=1, _144=1, _16=1, _81=1, _9=1} },
+  { 88, groups = {_289=1, _256=1, _144=1, _64=1, _25=1} },
+  { 94, groups = {_289=1, _256=1, _144=1, _81=1} }
 }
 
 function glassaddition.get_variations()
@@ -110,6 +111,30 @@ local function Description(text)
     table.insert(t,upper_first(word))
   end
   return table.concat(t," ")
+end
+
+local function finish_texture(texture, type)
+  if type == "glass" then
+    if glassaddition.enable_detail and not glassaddition.opaque then
+      return { texture.."^[opacity:190", texture.."^[mask:"..type.."_detail_mask.png" }
+    elseif not glassaddition.enable_detail and glassaddition.opaque then
+      return { texture.."^[opacity:255", texture.."^[mask:"..type.."_opaque_mask.png" }
+    elseif glassaddition.enable_detail and glassaddition.opaque then
+      return { texture.."^[opacity:255", texture.."^[mask:"..type.."_opaque_detail_mask.png" }
+    elseif not glassaddition.enable_detail and not glassaddition.opaque then
+      return { texture.."^[opacity:190", texture.."^[mask:"..type.."_mask.png" }
+    end
+  elseif type == "pane" then
+    if glassaddition.enable_detail and not glassaddition.opaque then
+      return  { texture.."^[mask:"..type.."_detail_mask.png", "", texture.."^[opacity:190" }
+    elseif not glassaddition.enable_detail and glassaddition.opaque then
+      return { texture.."^[mask:"..type.."_opaque_mask.png", "", texture.."^[opacity:255" }
+    elseif glassaddition.enable_detail and glassaddition.opaque then
+      return { texture.."^[mask:"..type.."_opaque_detail_mask.png", "", texture.."^[opacity:255" }
+    elseif not glassaddition.enable_detail and not glassaddition.opaque then
+      return { texture.."^[mask:"..type.."_mask.png", "", texture.."^[opacity:190" }
+    end
+  end
 end
 
 local function register_craft(baseitem, inputitem, output, color, index)
@@ -161,7 +186,8 @@ for color, rgb in pairs(glassaddition.colors) do
         description = Description(color.."_"..index.."_glass"),
         drawtype = "glasslike_framed",
         paramtype = "light",
-        tiles = {texture.."^[opacity:190", texture.."^[opacity:120"},
+        --tiles = {texture.."^[opacity:190", texture.."^[opacity:120"},
+        tiles = finish_texture(texture, "glass"),
         use_texture_alpha = true,
         light_propagates = true,
         groups = {cracky=3,oddly_breakable_by_hand=3},
@@ -170,7 +196,8 @@ for color, rgb in pairs(glassaddition.colors) do
       
       xpanes.register_pane(color.."_"..index.."_glass_pane", {
         description = Description(color.."_"..index.."_glass_pane"),
-        textures = {texture.."^[mask:pane_mask.png", "" ,texture.."^[opacity:190"},
+        --textures = {texture.."^[mask:pane_mask.png", "" ,texture.."^[opacity:190"},
+        textures = finish_texture(texture, "pane"),
         inventory_image = texture.."^[mask:pane_inv_mask.png",
         use_texture_alpha = true,
         sounds = default.node_sound_glass_defaults(),
@@ -192,7 +219,8 @@ for color, rgb in pairs(glassaddition.grayscale) do
     description = Description(color.."_glass"),
     drawtype = "glasslike_framed",
     paramtype = "light",
-    tiles = {texture.."^[opacity:190", texture.."^[opacity:120"},
+    --tiles = {texture.."^[opacity:190", texture.."^[opacity:120"},
+    tiles = finish_texture(texture, "glass"),
     use_texture_alpha = true,
     light_propagates = true,
     groups = {cracky=3,oddly_breakable_by_hand=3},
@@ -201,7 +229,8 @@ for color, rgb in pairs(glassaddition.grayscale) do
   
   xpanes.register_pane(color.."_glass_pane", {
     description = Description(color.."_glass_pane"),
-    textures = {texture.."^[mask:pane_mask.png", "", texture.."^[opacity:190"},
+    --textures = {texture.."^[mask:pane_mask.png", "", texture.."^[opacity:190"},
+    textures = finish_texture(texture, "pane"),
     inventory_image = texture.."^[mask:pane_inv_mask.png",
     use_texture_alpha = true,
     sounds = default.node_sound_glass_defaults(),
