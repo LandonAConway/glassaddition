@@ -36,6 +36,28 @@ glassaddition.colors = {
   orange_red = {r=255,g=64,b=0}
 }
 
+glassaddition.colors_cmy = {
+  red = {c=0,m=100,y=100},
+  pink = {c=0,m=100,y=50},
+  magenta = {c=0,m=100,y=0},
+  purple = {c=20,m=100,y=0},
+  violet = {c=50,m=100,y=0},
+  violet_blue = {c=67,m=100,y=0},
+  blue = {c=100,m=100,y=0},
+  blue_cyan = {c=100,m=50,y=0},
+  cyan = {c=100,m=0,y=0},
+  cyan_aqua = {c=100,m=0,y=25},
+  aqua = {c=100,m=0,y=50},
+  green = {c=100,m=0,y=100},
+  lime = {c=50,m=0,y=100},
+  lime_yellow = {c=25,m=0,y=100},
+  yellow = {c=0,m=0,y=100},
+  golden_yellow = {c=0,m=25,y=100},
+  yellow_orange = {c=0,m=36,y=100},
+  orange = {c=0,m=50,y=100},
+  orange_red = {c=0,m=75,y=100}
+}
+
 glassaddition.grayscale = {
   white = {r=255,g=255,b=255},
   light_grey_1 = {r=232,g=232,b=232},
@@ -194,6 +216,23 @@ for color, rgb in pairs(glassaddition.colors) do
         sounds = default.node_sound_glass_defaults(),
       })
       
+      minetest.register_alias("g_"..color.."_"..index, "glassaddition:"..color.."_"..index)
+	  
+      --current / maximum = percentage
+      local cmy = glassaddition.colors_cmy[color]
+      local max = 0.125
+      colorizer.register_craft({
+        input = "default:glass",
+        output = "glassaddition:"..color.."_"..index,
+        ink_usage = {
+          white = 1 * max,
+          black = (black / variations) * max,
+          magenta = (cmy.m / 100) * max,
+          yellow = (cmy.y / 100) * max,
+          cyan = (cmy.c / 100) * max
+        }
+      })
+      
       xpanes.register_pane(color.."_"..index.."_glass_pane", {
         description = Description(color.."_"..index.."_glass_pane"),
         --textures = {texture.."^[mask:pane_mask.png", "" ,texture.."^[opacity:190"},
@@ -203,6 +242,23 @@ for color, rgb in pairs(glassaddition.colors) do
         sounds = default.node_sound_glass_defaults(),
         groups = {snappy=2, cracky=3, oddly_breakable_by_hand=3},
         recipe = {{"glassaddition:"..color.."_"..index}}
+      })
+      
+      minetest.register_alias("gp_"..color.."_"..index, "xpanes:"..color.."_"..index.."_glass_pane")
+	  
+      --current / maximum = percentage
+      local cmy = glassaddition.colors_cmy[color]
+      local max = 0.125
+      colorizer.register_craft({
+        input = "xpanes:pane_flat",
+        output = "glassaddition:"..color.."_"..index.."_glass_pane",
+        ink_usage = {
+          white = 1 * max,
+          black = (black / variations) * max,
+          magenta = (cmy.m / 100) * max,
+          yellow = (cmy.y / 100) * max,
+          cyan = (cmy.c / 100) * max
+        }
       })
       
       index = index + 1
@@ -227,6 +283,22 @@ for color, rgb in pairs(glassaddition.grayscale) do
     sounds = default.node_sound_glass_defaults()
   })
   
+  minetest.register_alias("g_"..color, "glassaddition:"..color)
+  
+  --current / maximum = percentage
+  local max = 0.125
+  colorizer.register_craft({
+	input = "default:glass",
+	output = "glassaddition:"..color,
+	ink_usage = {
+	  white = 1 * max,
+	  black = (rgb.r / 12) * max,
+	  magenta = 0,
+	  yellow = 0,
+	  cyan = 0,
+	}
+  })
+  
   xpanes.register_pane(color.."_glass_pane", {
     description = Description(color.."_glass_pane"),
     --textures = {texture.."^[mask:pane_mask.png", "", texture.."^[opacity:190"},
@@ -236,5 +308,21 @@ for color, rgb in pairs(glassaddition.grayscale) do
     sounds = default.node_sound_glass_defaults(),
     groups = {snappy=2, cracky=3, oddly_breakable_by_hand=3},
     recipe = {{"glassaddition:"..color}}
+  })
+  
+  minetest.register_alias("gp_"..color, "xpanes:"..color.."_glass_pane")
+  
+  --current / maximum = percentage
+  local max = 0.125
+  colorizer.register_craft({
+	input = "xpanes:pane_flat",
+	output = "glassaddition:"..color.."_glass_pane",
+	ink_usage = {
+	  white = 1 * max,
+	  black = (rgb.r / 12) * max,
+	  magenta = 0,
+	  yellow = 0,
+	  cyan = 0,
+	}
   })
 end
